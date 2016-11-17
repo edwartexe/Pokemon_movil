@@ -34,8 +34,8 @@
             app:srcCompat="@drawable/icon_league"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
-            android:scaleType="fitXY"
-            android:visibility="invisible" />
+            android:scaleType="center"
+            android:visibility="visible" />
 
     </RelativeLayout>
 

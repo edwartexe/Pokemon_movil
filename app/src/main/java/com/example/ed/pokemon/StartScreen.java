@@ -78,11 +78,9 @@ public class StartScreen extends AppCompatActivity {
                     Poke pokedex;
                     Log.d(TAG,"pokes: "+jArray.length());
                     for(int i=0;i<jArray.length();i++){
-
                         Log.d(TAG, "step0");
                         JSONObject p=jArray.getJSONObject(i);
                         Log.d(TAG, "step1");
-
                         //Poke pk = new Poke(p.getInt("id"),p.getString("ImgFront")); //pre DBFLOW
                         //pokeList.add(pk); //PRE DBFLOW
                         //pokedex = new Poke(p.getInt("id"),p.getString("ImgFront"));

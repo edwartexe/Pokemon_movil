@@ -67,7 +67,8 @@
             android:onClick="iChooseYou"
             android:src="@drawable/splashart_bulbasaur"
             android:scaleType="fitXY"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/holo_green_dark" />
 
         <ImageButton
             android:layout_width="0dp"
@@ -76,7 +77,8 @@
             android:onClick="iChooseYou"
             android:src="@drawable/splashart_charmander"
             android:scaleType="fitXY"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/holo_red_dark" />
 
         <ImageButton
             android:layout_width="0dp"
@@ -85,7 +87,8 @@
             android:onClick="iChooseYou"
             android:src="@drawable/splashart_squirtle"
             android:scaleType="fitXY"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/holo_blue_dark" />
     </LinearLayout>
 
 </LinearLayout>

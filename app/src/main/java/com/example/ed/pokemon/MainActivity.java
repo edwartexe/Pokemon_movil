@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         aLocationRequest.setInterval(UPDATE_INTERNAL_IN_MILLISECONDS);
         aLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERNAL_IN_MILLISECONDS);
         aLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        //aLocationRequest.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20.0));
         salvajes = new ArrayList<Marker>();
         tiendas=new ArrayList<Marker>();
 
