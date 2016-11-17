@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">POKEMON</string>
+    <string name="use_potion">Usar Pocion</string>
+    <string name="give_leader">Asignar Lider</string>
 </resources>

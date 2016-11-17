@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/space"
     tools:context="com.example.ed.pokemon.StartScreen">
 
     <RelativeLayout
@@ -19,9 +20,10 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/sprite_earth"
+            app:srcCompat="@drawable/pokeworld"
             android:id="@+id/imageView9"
-            android:scaleType="centerCrop" />
+            android:scaleType="fitXY"
+            android:visibility="visible" />
 
         <ImageView
             android:layout_width="match_parent"
@@ -32,7 +34,8 @@
             app:srcCompat="@drawable/icon_league"
             android:adjustViewBounds="false"
             android:cropToPadding="false"
-            android:scaleType="center" />
+            android:scaleType="fitXY"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

@@ -86,7 +86,12 @@ public class CustomAdapterTeam extends BaseAdapter {
         }
 
         if(e.get(positon).Lead){
-            view.setBackgroundColor(0xFFFF4444);
+            //view.setBackgroundColor(0xFFFF4444);
+            view.setBackgroundResource(R.drawable.teamselect);
+        }else{
+            view.setBackgroundResource(R.drawable.teamselect2);
+            //view.setBackgroundColor(0xFF33b5e5);
+            //#afc0f3
         }
 
         return view;

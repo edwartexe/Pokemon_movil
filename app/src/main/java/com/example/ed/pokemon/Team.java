@@ -44,12 +44,20 @@ public class Team extends AppCompatActivity {
                 Intent j = new Intent(Team.this, com.example.ed.pokemon.ShowTeamPoke.class);
                 j.putExtra("eqid",datoAPasar.Equipo_id);
                 j.putExtra("pkid",datoAPasar.Pokedex_id);
-                startActivity(j);
+                startActivityForResult(j,1);
+                //finish();
             }
         });
+    }
 
 
-
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //if (requestCode == 1) {}
+            // Make sure the request was successful
+            //if (resultCode == RESULT_OK) {}
+        datos = new Select().from(Equipo.class).queryList();
+        CustomAdapterTeam adapter = new CustomAdapterTeam(this, datos);
+        lv.setAdapter(adapter);
     }
 }

@@ -2,8 +2,10 @@ package com.example.ed.pokemon;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -49,6 +51,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.json.JSONArray;
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button bb1;
     private Marker player;
     private List<Marker> salvajes;
+    private List<Marker> tiendas;
 
     private ProgressDialog pDialog;
     private List<Coordenadas> coordList;
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         aLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERNAL_IN_MILLISECONDS);
         aLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         salvajes = new ArrayList<Marker>();
+        tiendas=new ArrayList<Marker>();
 
         ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
 
@@ -190,8 +195,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             Log.d(TAG,"consegui locaciones");
             initLat=lastLocation.getLatitude();
             initLong=lastLocation.getLongitude();
-             if (VerificarRed() == true) {
+            if (VerificarRed() == true) {
                 new getData().execute();
+                new getPokestops().execute();
             }
         }
     }
@@ -211,19 +217,48 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
             @Override
-            public boolean onMarkerClick(Marker marker) {
+            public boolean onMarkerClick(final Marker marker) {
                 Log.d("DEBUG MARKER","__succesfull click");
                 if (marker.getTitle().equals("Pokemon salvaje"))
                 {
-                    Toast.makeText(MainActivity.this, "Pokedex number: "+marker.getSnippet(), Toast.LENGTH_LONG).show();
-
+                    //Toast.makeText(MainActivity.this, "Pokedex number: "+marker.getSnippet(), Toast.LENGTH_LONG).show();
                     Intent i = new Intent(MainActivity.this,Battle.class);
                     i.putExtra("valor1",marker.getSnippet());
                     startActivity(i);
-
-
                     return true;
-                }else{return false;}
+                }else{
+                    if(marker.getTitle().equals("Pokestop")){
+                        //Toast.makeText(MainActivity.this, ""+marker.getSnippet(), Toast.LENGTH_LONG).show();
+                        if( Integer.parseInt(marker.getSnippet()) %2==0){
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("PokeStop #"+marker.getSnippet())
+                                    .setMessage("¿Quieres usar esta poke parada?")
+                                    .setIcon(R.drawable.icon_potion)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            List<Entrenador> trainer = new Select().from(Entrenador.class).queryList();
+                                            SQLite.update(Entrenador.class).set(Entrenador_Table.potion.eq(trainer.get(0).potion+3)).where(Entrenador_Table.id.is(trainer.get(0).id)).async().execute();
+                                            Toast.makeText(MainActivity.this, "conseguiste pociones", Toast.LENGTH_SHORT).show();
+                                            marker.remove();
+                                        }}).setNegativeButton(android.R.string.no, null).show();
+                        }else{
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("PokeStop #"+marker.getSnippet())
+                                    .setMessage("¿Quieres usar esta poke parada?")
+                                    .setIcon(R.drawable.icon_pokeball)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            List<Entrenador> trainer = new Select().from(Entrenador.class).queryList();
+                                            SQLite.update(Entrenador.class).set(Entrenador_Table.pokeball.eq(trainer.get(0).pokeball+3)).where(Entrenador_Table.id.is(trainer.get(0).id)).async().execute();
+                                            Toast.makeText(MainActivity.this, "conseguiste pokebolas", Toast.LENGTH_SHORT).show();
+                                            marker.remove();
+                                        }}).setNegativeButton(android.R.string.no, null).show();
+                        }
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
 
 
             }
@@ -417,39 +452,124 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if (googleMap != null) {
 
 
-            if(!salvajes.isEmpty()){
-                for(int i=0;i<salvajes.size();i++){
-                    salvajes.get(i).remove();
+                if(!salvajes.isEmpty()){
+                    for(int i=0;i<salvajes.size();i++){
+                        salvajes.get(i).remove();
+                    }
+                    salvajes.clear();
+
                 }
-                salvajes.clear();
+                pokeList = new Select().from(Poke.class).queryList();
+                int rnd_poke;
+                if(salvajes.isEmpty()){
+                    for(int i=0;i<ncrdL;i++){
+                        Double ltd,longtd;
+                        //ltd=Double.parseDouble(coordList.get(i).getLatitude());
+                        //longtd=Double.parseDouble(coordList.get(i).getLongitude());
+                        ltd=   initLat+ (Math.random()*((0.02)))-0.01;
+                        longtd=initLong+ (Math.random()*((0.02)))-0.01;
+                        rnd_poke= (int) (Math.random()*pokeList.size());
 
-            }
-            pokeList = new Select().from(Poke.class).queryList();
-            if(salvajes.isEmpty()){
-                for(int i=0;i<ncrdL;i++){
-                    Double ltd,longtd;
-                    ltd=Double.parseDouble(coordList.get(i).getLatitude());
-                    longtd=Double.parseDouble(coordList.get(i).getLongitude());
-                    //ltd=   location.getLatitude()+ (Math.random()*((0.02)))-0.01;
-                    //longtd=location.getLongitude()+ (Math.random()*((0.02)))-0.01;
-
-                    try{
-                    Marker encuentro=googleMap.addMarker(new MarkerOptions()
+                        try{
+                            Marker encuentro=googleMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(ltd,longtd))
                                     .title("Pokemon salvaje")
-                                    .snippet(""+pokeList.get(i).id)
+                                    .snippet(""+pokeList.get(rnd_poke).id)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.sprite_2))
-                    );
-                        new loadImageFromNetwork(encuentro).execute(pokeList.get(i).ImgFront);
-                        salvajes.add(encuentro);
-                        //Toast.makeText(MainActivity.this,"created "+encuentro.getTitle()+" "+encuentro.getSnippet(),Toast.LENGTH_SHORT).show();
-                    }catch(Exception e){
-                        Log.d("Sht Happened",e.getLocalizedMessage());
-                        Toast.makeText(MainActivity.this,"DAMN SON "+i,Toast.LENGTH_SHORT).show();
+                            );
+                            new loadImageFromNetwork(encuentro).execute(pokeList.get(rnd_poke).ImgFront);
+                            salvajes.add(encuentro);
+                            //Toast.makeText(MainActivity.this,"created "+encuentro.getTitle()+" "+encuentro.getSnippet(),Toast.LENGTH_SHORT).show();
+                        }catch(Exception e){
+                            Log.d("Sht Happened",e.getLocalizedMessage());
+                            Toast.makeText(MainActivity.this,"DAMN SON "+i,Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }
+
+
+            }
+        }
+
+    }
+
+    private class getPokestops extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //pDialog=new ProgressDialog(MainActivity.this);
+            //pDialog.setMessage("Please Wait there..");
+            //pDialog.setCancelable(false);
+            //pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            String response=GetDatos();
+            coordList = new ArrayList<Coordenadas>();
+            if(response!=null){
+                try {
+                    JSONArray jArray = new JSONArray(response);
+                    Log.d(TAG,"response: "+jArray.length());
+                    //ncrdL=jArray.length();
+                    for(int i=0;i<jArray.length();i++){
+                        JSONObject c=jArray.getJSONObject(i);
+                        coordList.add(new Coordenadas(c.getString("lt"),c.getString("lng")));
                     }
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+            }else{
+                Log.d(TAG,"response is null");
             }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            //if(pDialog.isShowing())
+              //  pDialog.dismiss();
+
+
+            if (googleMap != null) {
+                if(!tiendas.isEmpty()){
+                    for(int i=0;i<tiendas.size();i++){
+                        tiendas.get(i).remove();
+                    }
+                    tiendas.clear();
+
+                }
+                //pokeList = new Select().from(Poke.class).queryList();
+                if(tiendas.isEmpty()){
+                    for(int i=0;i<5;i++){
+                        Double ltd,longtd;
+                        //ltd=Double.parseDouble(coordList.get(i).getLatitude());
+                        //longtd=Double.parseDouble(coordList.get(i).getLongitude());
+                        ltd=   initLat+ (Math.random()*((0.02)))-0.01;
+                        longtd=initLong+ (Math.random()*((0.02)))-0.01;
+
+                        try{
+                            Marker edificio=googleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(ltd,longtd))
+                                    .title("Pokestop")
+                                    .snippet(""+i)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.sprite_3))
+                            );
+                            //new loadImageFromNetwork(edificio).execute(pokeList.get(i).ImgFront);
+                            tiendas.add(edificio);
+                            //Toast.makeText(MainActivity.this,"created "+encuentro.getTitle()+" "+encuentro.getSnippet(),Toast.LENGTH_SHORT).show();
+                        }catch(Exception e){
+                            Log.d("Sht Happened",e.getLocalizedMessage());
+                            Toast.makeText(MainActivity.this,"DAMN SON "+i,Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }
 
 
             }
@@ -484,17 +604,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private class loadImageFromNetwork extends AsyncTask<String,Void,Bitmap>{
         public Marker mk;
         public loadImageFromNetwork(Marker marker)
-            {this.mk=marker;}
-       @Override
-       protected Bitmap doInBackground(String... urls){
-           Bitmap bitmap=null;
+        {this.mk=marker;}
+        @Override
+        protected Bitmap doInBackground(String... urls){
+            Bitmap bitmap=null;
             try {
                 bitmap = BitmapFactory.decodeStream((InputStream)new URL(urls[0]).getContent());
             } catch (Exception e) {
                 e.printStackTrace();
                 //Log.d(TAG,e.getLocalizedMessage());
             }
-           return bitmap;
+            return bitmap;
         }
         @Override
         protected void onPostExecute(Bitmap bitmap){
@@ -504,9 +624,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         }
     }
-
-
-
 
 
     public boolean VerificarRed(){

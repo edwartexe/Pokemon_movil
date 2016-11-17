@@ -26,6 +26,8 @@ public class CharacterSelect extends AppCompatActivity {
         ib1= (ImageButton) findViewById(R.id.imageButton);
         ib2= (ImageButton) findViewById(R.id.imageButton2);
         ib3= (ImageButton) findViewById(R.id.imageButton3);
+        //#385830
+
     }
 
     public void iChooseYou(View view) {
@@ -38,7 +40,7 @@ public class CharacterSelect extends AppCompatActivity {
             mC.save();
             if(view.equals(ib1)){
                 Toast.makeText(this,"bulbasaur",Toast.LENGTH_SHORT).show();
-                atrapado = new Equipo(0, 1, 45, 40, 40, 4,true);
+                atrapado = new Equipo(0, 1, 50, 49, 60, 4,true);
                 atrapado.save();
             }
             if(view.equals(ib2)){

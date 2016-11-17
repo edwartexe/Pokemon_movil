@@ -79,7 +79,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Usar Masterball, there&apos;s no fight yet"
+            android:text="Atacar!"
             android:onClick="onClickAtacar"
             android:id="@+id/button7" />
     </LinearLayout>
